@@ -67,7 +67,7 @@
 **             Thanks to Piotr Krysiuk for finding and reporting 
 **             this error!
 */
-/* MD6 standard mode of operation
+/* MD6 standard mode of operation
 **
 ** Defines the following interfaces (documentation copied from md6.h)
 */
@@ -83,51 +83,51 @@
 */
 
 extern int md6_init( md6_state *st,             /* state to initialize */
-		     int d                          /* hash bit length */
-		     );
+             int d                          /* hash bit length */
+             );
 
 extern int md6_full_init( md6_state *st,        /* state to initialize */
-			  int d,                    /* hash bit length */
-			  unsigned char *key,       /* OK to give NULL */
-			  int keylen,       /* (in bytes) OK to give 0 */
-			  int L,     /* mode; OK to give md6_default_L */
-			  int r                    /* number of rounds */
-			  );
+              int d,                    /* hash bit length */
+              unsigned char *key,       /* OK to give NULL */
+              int keylen,       /* (in bytes) OK to give 0 */
+              int L,     /* mode; OK to give md6_default_L */
+              int r                    /* number of rounds */
+              );
 
 extern int md6_update( md6_state *st,             /* initialized state */
-		       unsigned char *data,            /* data portion */
-		       uint64_t datalen          /* its length in bits */
-		       );
+               unsigned char *data,            /* data portion */
+               uint64_t datalen          /* its length in bits */
+               );
 
 extern int md6_final( md6_state *st,            /* initialized/updated */
-		      unsigned char *hashval,      /* output; NULL OK  */
-		      );
+              unsigned char *hashval,      /* output; NULL OK  */
+              );
 
-/* The next routines compute a hash for a message given all at once.    
+/* The next routines compute a hash for a message given all at once.
 ** The resulting hash value is returned to a specified location.
 ** Only one call is needed.  Use md6_hash for the standard md6 hash,
 ** and md6_full_hash if you want to specify additional parameters.
 */
 
 extern int md6_hash( int d,                         /* hash bit length */
-		     unsigned char *data,     /* complete data to hash */
-		     uint64_t datalen            /* its length in bits */
-		     unsigned char *hashval,                 /* output */
-		     );
+             unsigned char *data,     /* complete data to hash */
+             uint64_t datalen            /* its length in bits */
+             unsigned char *hashval,                 /* output */
+             );
 
 extern int md6_full_hash( int d,                    /* hash bit length */
-			  unsigned char *data,/* complete data to hash */
-			  uint64_t datalen,      /* its length in bits */
-			  unsigned char *key,       /* OK to give NULL */
-			  int keylen,       /* (in bytes) OK to give 0 */
-			  int L,     /* mode; OK to give md6_default_L */
-			  int r,                   /* number of rounds */
-			  unsigned char *hashval,            /* output */
-			  );
+              unsigned char *data,/* complete data to hash */
+              uint64_t datalen,      /* its length in bits */
+              unsigned char *key,       /* OK to give NULL */
+              int keylen,       /* (in bytes) OK to give 0 */
+              int L,     /* mode; OK to give md6_default_L */
+              int r,                   /* number of rounds */
+              unsigned char *hashval,            /* output */
+              );
 #endif
 
-#include <assert.h>
-#include <stdio.h> 
+#include <assert.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "md6.h"
@@ -146,26 +146,26 @@ extern int md6_full_hash( int d,                    /* hash bit length */
 
 /* Useful macros: min and max */
 #ifndef min
-#define min(a,b) ((a)<(b)? (a) : (b))
+    #define min(a, b) ((a)<(b)? (a) : (b))
 #endif
 #ifndef max
-#define max(a,b) ((a)>(b)? (a) : (b))
+    #define max(a, b) ((a)>(b)? (a) : (b))
 #endif
 
 /* Default number of rounds                                    */
 /* (as a function of digest size d and keylen                  */
-int md6_default_r( int d ,
-                   int keylen )
-{ int r;
-  /* Default number of rounds is forty plus floor(d/4) */
-  r = 40 + (d/4);
-  /* unless keylen > 0, in which case it must be >= 80 as well */
-  if (keylen>0)
-    r = max(80,r);
-  return r;
+int md6_default_r(int d, int keylen)
+{
+    int r;
+    /* Default number of rounds is forty plus floor(d/4) */
+    r = 40 + (d / 4);
+    /* unless keylen > 0, in which case it must be >= 80 as well */
+    if (keylen > 0)
+        r = max(80, r);
+    return r;
 }
 
-
+
 /* MD6 Constant Vector Q
 ** Q = initial 960 bits of fractional part of sqrt(6)
 **
@@ -173,29 +173,16 @@ int md6_default_r( int d ,
 ** w = 64 is needed for the standard version of MD6.
 */
 
-#if (w==64)                      /* for standard version */
+#if (w == 64)                      /* for standard version */
 /* 15 64-bit words */
-static const md6_word Q[15] =
-  {
-    0x7311c2812425cfa0ULL,
-    0x6432286434aac8e7ULL, 
-    0xb60450e9ef68b7c1ULL, 
-    0xe8fb23908d9f06f1ULL, 
-    0xdd2e76cba691e5bfULL, 
-    0x0cd0d63b2c30bc41ULL, 
-    0x1f8ccf6823058f8aULL, 
-    0x54e5ed5b88e3775dULL, 
-    0x4ad12aae0a6d6031ULL, 
-    0x3e7f16bb88222e0dULL, 
-    0x8af8671d3fb50c2cULL, 
-    0x995ad1178bd25c31ULL, 
-    0xc878c1dd04c4b633ULL, 
-    0x3b72066c7a1552acULL, 
-    0x0d6f3522631effcbULL, 
-  };
+static const md6_word Q[15] = {
+0x7311c2812425cfa0ULL, 0x6432286434aac8e7ULL, 0xb60450e9ef68b7c1ULL, 0xe8fb23908d9f06f1ULL, 0xdd2e76cba691e5bfULL
+, 0x0cd0d63b2c30bc41ULL, 0x1f8ccf6823058f8aULL, 0x54e5ed5b88e3775dULL, 0x4ad12aae0a6d6031ULL, 0x3e7f16bb88222e0dULL
+, 0x8af8671d3fb50c2cULL, 0x995ad1178bd25c31ULL, 0xc878c1dd04c4b633ULL, 0x3b72066c7a1552acULL, 0x0d6f3522631effcbULL,
+};
 #endif
 
-#if (w==32)                      /* for variant version */
+#if (w == 32)                      /* for variant version */
 /* 30 32-bit words */
 static const md6_word Q[30] =
   {
@@ -217,10 +204,10 @@ static const md6_word Q[30] =
   };
 #endif
 
-/* MD6 Constant Vector Q (continued).
+/* MD6 Constant Vector Q (continued).
 */
 
-#if (w==16)                      /* for variant version */
+#if (w == 16)                      /* for variant version */
 /* 60 16-bit words */
 static const md6_word Q[60] =
   {
@@ -242,7 +229,7 @@ static const md6_word Q[60] =
   };
 #endif
 
-#if (w==8)                      /* for variant version */
+#if (w == 8)                      /* for variant version */
 /* 120 8-bit words */
 static const md6_word Q[120] =
   {
@@ -264,12 +251,12 @@ static const md6_word Q[120] =
   };
 #endif
 
-/* Endianness.
+/* Endianness.
 */
 
 /* routines for dealing with byte ordering */
 
-int md6_byte_order = 0;    
+int md6_byte_order = 0;
 /* md6_byte_order describes the endianness of the 
 ** underlying machine:
 ** 0 = unknown
@@ -283,52 +270,55 @@ int md6_byte_order = 0;
 */
 #define MD6_LITTLE_ENDIAN (md6_byte_order == 1)
 #define MD6_BIG_ENDIAN    (md6_byte_order == 2)
- 
-void md6_detect_byte_order( void )
+
+void md6_detect_byte_order(void)
 /* determine if underlying machine is little-endian or big-endian
 ** set global variable md6_byte_order to reflect result
 ** Written to work for any w.
 */
-{ md6_word x = 1 | (((md6_word)2)<<(w-8));
-  unsigned char *cp = (unsigned char *)&x;
-  if ( *cp == 1 )        md6_byte_order = 1;      /* little-endian */
-  else if ( *cp == 2 )   md6_byte_order = 2;      /* big-endian    */
-  else                   md6_byte_order = 0;      /* unknown       */
+{
+    md6_word x = 1 | (((md6_word)2) << (w - 8));
+    unsigned char* cp = (unsigned char*)&x;
+    if (*cp == 1)
+        md6_byte_order = 1;      /* little-endian */
+    else if (*cp == 2)
+        md6_byte_order = 2;      /* big-endian    */
+    else
+        md6_byte_order = 0;      /* unknown       */
 }
 
-md6_word md6_byte_reverse( md6_word x )
+md6_word md6_byte_reverse(md6_word x)
 /* return byte-reversal of md6_word x.
 ** Written to work for any w, w=8,16,32,64.
 */
-{ 
-#define mask8  ((md6_word)0x00ff00ff00ff00ffULL)
-#define mask16 ((md6_word)0x0000ffff0000ffffULL)
-#if (w==64)
-  x = (x << 32) | (x >> 32);
-#endif
-#if (w >= 32)
-  x = ((x & mask16) << 16) | ((x & ~mask16) >> 16);
-#endif
-#if (w >= 16)
-  x = ((x & mask8) << 8) | ((x & ~mask8) >> 8);
-#endif
-  return x;
+{
+    #define mask8  ((md6_word)0x00ff00ff00ff00ffULL)
+    #define mask16 ((md6_word)0x0000ffff0000ffffULL)
+    #if (w == 64)
+    x = (x << 32) | (x >> 32);
+    #endif
+    #if (w >= 32)
+    x = ((x & mask16) << 16) | ((x & ~mask16) >> 16);
+    #endif
+    #if (w >= 16)
+    x = ((x & mask8) << 8) | ((x & ~mask8) >> 8);
+    #endif
+    return x;
 }
 
-void md6_reverse_little_endian( md6_word *x, int count )
+void md6_reverse_little_endian(md6_word* x, int count)
 /* Byte-reverse words x[0...count-1] if machine is little_endian */
 {
-  int i;
-  if (MD6_LITTLE_ENDIAN)
-    for (i=0;i<count;i++)
-      x[i] = md6_byte_reverse(x[i]);
+    int i;
+    if (MD6_LITTLE_ENDIAN)
+        for (i = 0; i < count; i++)
+            x[i] = md6_byte_reverse(x[i]);
 }
 
-/* Appending one bit string onto another.
+/* Appending one bit string onto another.
 */
 
-void append_bits( unsigned char *dest, unsigned int destlen,
-		  unsigned char *src,  unsigned int srclen )
+void append_bits(unsigned char* dest, unsigned int destlen, unsigned char* src, unsigned int srclen)
 /* Append bit string src to the end of bit string dest
 ** Input:
 **     dest         a bit string of destlen bits, starting in dest[0]
@@ -343,60 +333,65 @@ void append_bits( unsigned char *dest, unsigned int destlen,
 **                  zeros will fill any unused bit positions in the 
 **                  last byte.
 */
-{ int i, di, accumlen;
-  uint16_t accum;
-  int srcbytes;
+{
+    int i, di, accumlen;
+    uint16_t accum;
+    int srcbytes;
 
-  if (srclen == 0) return;
+    if (srclen == 0)
+        return;
 
-  /* Initialize accum, accumlen, and di */
-  accum = 0;    /* accumulates bits waiting to be moved, right-justified */
-  accumlen = 0; /* number of bits in accumulator */
-  if (destlen%8 != 0)
-    { accumlen = destlen%8;
-      accum = dest[destlen/8];        /* grab partial byte from dest     */
-      accum = accum >> (8-accumlen);  /* right-justify it in accumulator */
+    /* Initialize accum, accumlen, and di */
+    accum = 0;    /* accumulates bits waiting to be moved, right-justified */
+    accumlen = 0; /* number of bits in accumulator */
+    if (destlen % 8 != 0)
+    {
+        accumlen = destlen % 8;
+        accum = dest[destlen / 8];        /* grab partial byte from dest     */
+        accum = accum >> (8 - accumlen);  /* right-justify it in accumulator */
     }
-  di = destlen/8;        /* index of where next byte will go within dest */
-  
-  /* Now process each byte of src */
-  srcbytes = (srclen+7)/8;   /* number of bytes (full or partial) in src */
-  for (i=0;i<srcbytes;i++)
+    di = destlen / 8;        /* index of where next byte will go within dest */
+
+    /* Now process each byte of src */
+    srcbytes = (srclen + 7) / 8;   /* number of bytes (full or partial) in src */
+    for (i = 0; i < srcbytes; i++)
     { /* shift good bits from src[i] into accum */
-      if (i != srcbytes-1) /* not last byte */
-	{ accum = (accum << 8) ^ src[i];  
-	  accumlen += 8;
-	}
-      else /* last byte */
-	{ int newbits = ((srclen%8 == 0) ? 8 : (srclen%8));
-	  accum = (accum << newbits) | (src[i] >> (8-newbits));
-	  accumlen += newbits;
-	}
-      /* do as many high-order bits of accum as you can (or need to) */
-      while ( ( (i != srcbytes-1) & (accumlen >= 8) ) ||
-	      ( (i == srcbytes-1) & (accumlen > 0) ) )
-	{ int numbits = min(8,accumlen);
-	  unsigned char bits;
-	  bits = accum >> (accumlen - numbits);    /* right justified */
-	  bits = bits << (8-numbits);              /* left justified  */
-	  bits &= (0xff00 >> numbits);             /* mask            */
-	  dest[di++] = bits;                       /* save            */
-	  accumlen -= numbits; 
-	}
+        if (i != srcbytes - 1) /* not last byte */
+        {
+            accum = (accum << 8) ^ src[i];
+            accumlen += 8;
+        }
+        else /* last byte */
+        {
+            int newbits = ((srclen % 8 == 0) ? 8 : (srclen % 8));
+            accum = (accum << newbits) | (src[i] >> (8 - newbits));
+            accumlen += newbits;
+        }
+        /* do as many high-order bits of accum as you can (or need to) */
+        while (((i != srcbytes - 1) & (accumlen >= 8)) || ((i == srcbytes - 1) & (accumlen > 0)))
+        {
+            int numbits = min(8, accumlen);
+            unsigned char bits;
+            bits = accum >> (accumlen - numbits);    /* right justified */
+            bits = bits << (8 - numbits);              /* left justified  */
+            bits &= (0xff00 >> numbits);             /* mask            */
+            dest[di++] = bits;                       /* save            */
+            accumlen -= numbits;
+        }
     }
 }
 
-/* State initialization. (md6_full_init, with all parameters specified)
+/* State initialization. (md6_full_init, with all parameters specified)
 ** 
 */
 
-int md6_full_init( md6_state *st,       /* uninitialized state to use */
-		   int d,                          /* hash bit length */
-		   unsigned char *key,        /* key; OK to give NULL */
-		   int keylen,     /* keylength (bytes); OK to give 0 */
-		   int L,           /* mode; OK to give md6_default_L */
-		   int r                          /* number of rounds */
-		   )
+int md6_full_init(md6_state* st,       /* uninitialized state to use */
+                  int d,                          /* hash bit length */
+                  unsigned char* key,        /* key; OK to give NULL */
+                  int keylen,     /* keylength (bytes); OK to give 0 */
+                  int L,           /* mode; OK to give md6_default_L */
+                  int r                          /* number of rounds */
+)
 /* Initialize md6_state
 ** Input:
 **     st         md6_state to be initialized
@@ -416,54 +411,53 @@ int md6_full_init( md6_state *st,       /* uninitialized state to use */
 **       MD6_BADHASHLEN
 */
 { /* check that md6_full_init input parameters make some sense */
-  if (st == NULL) return MD6_NULLSTATE;
-  if ( (key != NULL) && ((keylen < 0) || (keylen > k*(w/8))) )
-    return MD6_BADKEYLEN;
-  if ( d < 1 || d > 512 || d > w*c/2 ) return MD6_BADHASHLEN;
+    if (st == NULL)
+        return MD6_NULLSTATE;
+    if ((key != NULL) && ((keylen < 0) || (keylen > k * (w / 8))))
+        return MD6_BADKEYLEN;
+    if (d < 1 || d > 512 || d > w * c / 2)
+        return MD6_BADHASHLEN;
 
-  md6_detect_byte_order();
-  memset(st,0,sizeof(md6_state));  /* clear state to zero */
-  st->d = d;                       /* save hashbitlen */
-  if (key != NULL && keylen > 0)   /* if no key given, use memset zeros*/
-    { memcpy(st->K,key,keylen);    /* else save key (with zeros added) */
-      st->keylen = keylen;
-      /* handle endian-ness */       /* first byte went into high end */
-      md6_reverse_little_endian(st->K,k);
+    md6_detect_byte_order();
+    memset(st, 0, sizeof(md6_state));  /* clear state to zero */
+    st->d = d;                       /* save hashbitlen */
+    if (key != NULL && keylen > 0)   /* if no key given, use memset zeros*/
+    {
+        memcpy(st->K, key, keylen);    /* else save key (with zeros added) */
+        st->keylen = keylen;
+        /* handle endian-ness */       /* first byte went into high end */
+        md6_reverse_little_endian(st->K, k);
     }
-  else
-    st->keylen = 0;
-  if ( (L<0) | (L>255) ) return MD6_BAD_L;
-  st->L = L;
-  if ( (r<0) | (r>255) ) return MD6_BAD_r;
-  st->r = r;
-  st->initialized = 1;  
-  st->top = 1;
-  /* if SEQ mode for level 1; use IV=0  */
-  /* zero bits already there by memset; */
-  /* we just need to set st->bits[1]    */
-  if (L==0) st->bits[1] = c*w;     
-  compression_hook = NULL;     /* just to be sure default is "not set" */
-  return MD6_SUCCESS;
+    else
+        st->keylen = 0;
+    if ((L < 0) | (L > 255))
+        return MD6_BAD_L;
+    st->L = L;
+    if ((r < 0) | (r > 255))
+        return MD6_BAD_r;
+    st->r = r;
+    st->initialized = 1;
+    st->top = 1;
+    /* if SEQ mode for level 1; use IV=0  */
+    /* zero bits already there by memset; */
+    /* we just need to set st->bits[1]    */
+    if (L == 0)
+        st->bits[1] = c * w;
+    compression_hook = NULL;     /* just to be sure default is "not set" */
+    return MD6_SUCCESS;
 }
 
-/* State initialization. (md6_init, which defaults most parameters.)
+/* State initialization. (md6_init, which defaults most parameters.)
 **
 */
 
-int md6_init( md6_state *st,
-	      int d 
-	      )
+int md6_init(md6_state* st, int d)
 /* Same as md6_full_init, but with default key, L, and r */
-{ return md6_full_init(st,
-		       d,
-		       NULL,
-		       0,
-		       md6_default_L,
-		       md6_default_r(d,0)
-		       );
+{
+    return md6_full_init(st, d, NULL, 0, md6_default_L, md6_default_r(d, 0));
 }
 
-/* Data structure notes.
+/* Data structure notes.
 */
 
 /*
@@ -504,14 +498,10 @@ Here are some notes on the data structures used (inside state).
   final hash value, in the first or second (if top = L+1) slot.
 
 */
-/* Compress one block -- compress data at a node (md6_compress_block).
+/* Compress one block -- compress data at a node (md6_compress_block).
 */
 
-int md6_compress_block( md6_word *C,
-			md6_state *st, 
-			int ell, 
-			int z
-			)
+int md6_compress_block(md6_word* C, md6_state* st, int ell, int z)
 /* compress block at level ell, and put c-word result into C.
 ** Input:
 **     st         current md6 computation state
@@ -531,49 +521,52 @@ int md6_compress_block( md6_word *C,
 **     MD6_STACKUNDERFLOW
 **     MD6_STACKOVERFLOW
 */
-{ int p, err;
+{
+    int p, err;
 
-  /* check that input values are sensible */
-  if ( st == NULL) return MD6_NULLSTATE;
-  if ( st->initialized == 0 ) return MD6_STATENOTINIT;
-  if ( ell < 0 ) return MD6_STACKUNDERFLOW;
-  if ( ell >= md6_max_stack_height-1 ) return MD6_STACKOVERFLOW;
+    /* check that input values are sensible */
+    if (st == NULL)
+        return MD6_NULLSTATE;
+    if (st->initialized == 0)
+        return MD6_STATENOTINIT;
+    if (ell < 0)
+        return MD6_STACKUNDERFLOW;
+    if (ell >= md6_max_stack_height - 1)
+        return MD6_STACKOVERFLOW;
 
-  st->compression_calls++;
+    st->compression_calls++;
 
-  if (ell==1) /* leaf; hashing data; reverse bytes if nec. */
-    { if (ell<(st->L + 1)) /* PAR (tree) node */
-	md6_reverse_little_endian(&(st->B[ell][0]),b);
-      else /* SEQ (sequential) node; don't reverse chaining vars */
-	md6_reverse_little_endian(&(st->B[ell][c]),b-c);
+    if (ell == 1) /* leaf; hashing data; reverse bytes if nec. */
+    {
+        if (ell < (st->L + 1)) /* PAR (tree) node */
+            md6_reverse_little_endian(&(st->B[ell][0]), b);
+        else /* SEQ (sequential) node; don't reverse chaining vars */
+            md6_reverse_little_endian(&(st->B[ell][c]), b - c);
     }
 
-  p = b*w - st->bits[ell];          /* number of pad bits */
+    p = b * w - st->bits[ell];          /* number of pad bits */
 
-  err = 
-    md6_standard_compress( 
-      C,                                      /* C    */
-      Q,                                      /* Q    */
-      st->K,                                  /* K    */
-      ell, st->i_for_level[ell],              /* -> U */
-      st->r, st->L, z, p, st->keylen, st->d,  /* -> V */
-      st->B[ell]                              /* B    */
-			   );                         
-  if (err) return err; 
+    err = md6_standard_compress(C,                                      /* C    */
+                                Q,                                      /* Q    */
+                                st->K,                                  /* K    */
+                                ell, st->i_for_level[ell],              /* -> U */
+                                st->r, st->L, z, p, st->keylen, st->d,  /* -> V */
+                                st->B[ell]                              /* B    */
+    );
+    if (err)
+        return err;
 
-  st->bits[ell] = 0; /* clear bits used count this level */
-  st->i_for_level[ell]++;
+    st->bits[ell] = 0; /* clear bits used count this level */
+    st->i_for_level[ell]++;
 
-  memset(&(st->B[ell][0]),0,b*sizeof(md6_word));     /* clear B[ell] */
-  return MD6_SUCCESS;
+    memset(&(st->B[ell][0]), 0, b * sizeof(md6_word));     /* clear B[ell] */
+    return MD6_SUCCESS;
 }
 
-/* Process (compress) a node and its compressible ancestors.
+/* Process (compress) a node and its compressible ancestors.
 */
 
-int md6_process( md6_state *st,
-		 int ell,
-		 int final )
+int md6_process(md6_state* st, int ell, int final)
 /*
 ** Do processing of level ell (and higher, if necessary) blocks.
 ** 
@@ -593,73 +586,79 @@ int md6_process( md6_state *st,
 **     MD6_NULLSTATE
 **     MD6_STATENOTINIT
 */
-{ int err, z, next_level;
-  md6_word C[c];
+{
+    int err, z, next_level;
+    md6_word C[c];
 
-  /* check that input values are sensible */
-  if ( st == NULL) return MD6_NULLSTATE;
-  if ( st->initialized == 0 ) return MD6_STATENOTINIT;
+    /* check that input values are sensible */
+    if (st == NULL)
+        return MD6_NULLSTATE;
+    if (st->initialized == 0)
+        return MD6_STATENOTINIT;
 
-  if (!final) /* not final -- more input will be coming */
+    if (!final) /* not final -- more input will be coming */
     { /* if not final and block on this level not full, nothing to do */
-      if ( st->bits[ell] < b*w ) 
-	return MD6_SUCCESS;
-      /* else fall through to compress this full block, 
-      **       since more input will be coming 
-      */
+        if (st->bits[ell] < b * w)
+            return MD6_SUCCESS;
+        /* else fall through to compress this full block,
+        **       since more input will be coming
+        */
     }
-  else /* final -- no more input will be coming */
-    { if ( ell == st->top )
-	{ if (ell == (st->L + 1)) /* SEQ node */
-	    { if ( st->bits[ell]==c*w && st->i_for_level[ell]>0 )
-		return MD6_SUCCESS;
-	      /* else (bits>cw or i==0, so fall thru to compress */
-	    }
-           else /* st->top == ell <= st->L so we are at top tree node */
-	     { if ( ell>1 && st->bits[ell]==c*w)
-		 return MD6_SUCCESS;
-	       /* else (ell==1 or bits>cw, so fall thru to compress */
-	     }
-	}
-      /* else (here ell < st->top so fall through to compress */
+    else /* final -- no more input will be coming */
+    {
+        if (ell == st->top)
+        {
+            if (ell == (st->L + 1)) /* SEQ node */
+            {
+                if (st->bits[ell] == c * w && st->i_for_level[ell] > 0)
+                    return MD6_SUCCESS;
+                /* else (bits>cw or i==0, so fall thru to compress */
+            }
+            else /* st->top == ell <= st->L so we are at top tree node */
+            {
+                if (ell > 1 && st->bits[ell] == c * w)
+                    return MD6_SUCCESS;
+                /* else (ell==1 or bits>cw, so fall thru to compress */
+            }
+        }
+        /* else (here ell < st->top so fall through to compress */
     }
 
-  /* compress block at this level; result goes into C */
-  /* first set z to 1 iff this is the very last compression */
-  z = 0; if (final && (ell == st->top)) z = 1; 
-  if ((err = md6_compress_block(C,st,ell,z))) 
-      return err;
-  if (z==1) /* save final chaining value in st->hashval */
-    { memcpy( st->hashval, C, md6_c*(w/8) );
-      return MD6_SUCCESS;
+    /* compress block at this level; result goes into C */
+    /* first set z to 1 iff this is the very last compression */
+    z = 0;
+    if (final && (ell == st->top))
+        z = 1;
+    if ((err = md6_compress_block(C, st, ell, z)))
+        return err;
+    if (z == 1) /* save final chaining value in st->hashval */
+    {
+        memcpy(st->hashval, C, md6_c * (w / 8));
+        return MD6_SUCCESS;
     }
-  
-  /* where should result go? To "next level" */
-  next_level = min(ell+1,st->L+1);
-  /* Start sequential mode with IV=0 at that level if necessary 
-  ** (All that is needed is to set bits[next_level] to c*w, 
-  ** since the bits themselves are already zeroed, either
-  ** initially, or at the end of md6_compress_block.)
-  */
-  if (next_level == st->L + 1 
-      && st->i_for_level[next_level]==0
-      && st->bits[next_level]==0 )
-    st->bits[next_level] = c*w;   
-  /* now copy C onto next level */
-  memcpy((char *)st->B[next_level] + st->bits[next_level]/8,
-	 C,
-	 c*(w/8));
-  st->bits[next_level] += c*w;   
-  if (next_level > st->top) st->top = next_level;
 
-  return md6_process(st,next_level,final);
+    /* where should result go? To "next level" */
+    next_level = min(ell + 1, st->L + 1);
+    /* Start sequential mode with IV=0 at that level if necessary
+    ** (All that is needed is to set bits[next_level] to c*w,
+    ** since the bits themselves are already zeroed, either
+    ** initially, or at the end of md6_compress_block.)
+    */
+    if (next_level == st->L + 1 && st->i_for_level[next_level] == 0 && st->bits[next_level] == 0)
+        st->bits[next_level] = c * w;
+    /* now copy C onto next level */
+    memcpy((char*)st->B[next_level] + st->bits[next_level] / 8, C, c * (w / 8));
+    st->bits[next_level] += c * w;
+    if (next_level > st->top)
+        st->top = next_level;
+
+    return md6_process(st, next_level, final);
 }
-/* Update -- incorporate data string into hash computation.
+
+/* Update -- incorporate data string into hash computation.
 */
 
-int md6_update( md6_state *st, 
-		unsigned char *data, 
-		uint64_t databitlen )
+int md6_update(md6_state* st, unsigned char* data, uint64_t databitlen)
 /* Process input byte string data, updating state to reflect result
 ** Input:
 **     st               already initialized state to be updated
@@ -669,57 +668,57 @@ int md6_update( md6_state *st,
 ** Modifies:
 **     st               updated to reflect input of data
 */
-{ unsigned int j, portion_size;
-  int err;
+{
+    unsigned int j, portion_size;
+    int err;
 
-  /* check that input values are sensible */
-  if ( st == NULL ) return MD6_NULLSTATE;
-  if ( st->initialized == 0 ) return MD6_STATENOTINIT;
-  if ( data == NULL ) return MD6_NULLDATA;
-  
-  j = 0; /* j = number of bits processed so far with this update */
-  while (j<databitlen)
+    /* check that input values are sensible */
+    if (st == NULL)
+        return MD6_NULLSTATE;
+    if (st->initialized == 0)
+        return MD6_STATENOTINIT;
+    if (data == NULL)
+        return MD6_NULLDATA;
+
+    j = 0; /* j = number of bits processed so far with this update */
+    while (j < databitlen)
     { /* handle input string in portions (portion_size in bits)
       ** portion_size may be zero (level 1 data block might be full, 
       ** having size b*w bits) */
-      portion_size = min(databitlen-j,
-			 (unsigned int)(b*w-(st->bits[1]))); 
+        portion_size = min(databitlen - j, (unsigned int)(b * w - (st->bits[1])));
 
-      if ((portion_size % 8 == 0) && 
-	  (st->bits[1] % 8 == 0) &&
-	  (j % 8 == 0))
-	{ /* use mempy to handle easy, but most common, case */
-	  memcpy((char *)st->B[1] + st->bits[1]/8,
-		 &(data[j/8]),                                 
-		 portion_size/8);
-	}
-      else /* handle messy case where shifting is needed */
-	{ append_bits((unsigned char *)st->B[1], /* dest */
-		      st->bits[1],   /* dest current bit size */
-		      &(data[j/8]),  /* src */
-		      portion_size); /* src size in bits  */
-	}
-      j += portion_size;
-      st->bits[1] += portion_size;
-      st->bits_processed += portion_size;
+        if ((portion_size % 8 == 0) && (st->bits[1] % 8 == 0) && (j % 8 == 0))
+        { /* use mempy to handle easy, but most common, case */
+            memcpy((char*)st->B[1] + st->bits[1] / 8, &(data[j / 8]), portion_size / 8);
+        }
+        else /* handle messy case where shifting is needed */
+        {
+            append_bits((unsigned char*)st->B[1], /* dest */
+                        st->bits[1],   /* dest current bit size */
+                        &(data[j / 8]),  /* src */
+                        portion_size); /* src size in bits  */
+        }
+        j += portion_size;
+        st->bits[1] += portion_size;
+        st->bits_processed += portion_size;
 
-      /* compress level-1 block if it is now full 
-	 but we're not done yet */
-      if (st->bits[1] == b*w && j<databitlen)
-	{ if ((err=md6_process(st,
-			       1,    /* ell */
-			       0     /* final */
-			       ))) 
-	    return err; 
-	}
+        /* compress level-1 block if it is now full
+       but we're not done yet */
+        if (st->bits[1] == b * w && j < databitlen)
+        {
+            if ((err = md6_process(st, 1,    /* ell */
+                                   0     /* final */
+            )))
+                return err;
+        }
     } /* end of loop body handling input portion */
-  return MD6_SUCCESS;
+    return MD6_SUCCESS;
 }
 
-/* Convert hash value to hexadecimal, and store it in state.
+/* Convert hash value to hexadecimal, and store it in state.
 */
 
-int md6_compute_hex_hashval( md6_state *st )
+int md6_compute_hex_hashval(md6_state* st)
 /*
 ** Convert hashval in st->hashval into hexadecimal, and
 ** save result in st->hexhashval
@@ -731,56 +730,59 @@ int md6_compute_hex_hashval( md6_state *st )
 **    MD6_SUCCESS
 **    MD6_NULLSTATE                      (if input state pointer was NULL)
 */
-{ int i;
-  static unsigned char hex_digits[] = "0123456789abcdef";
+{
+    int i;
+    static unsigned char hex_digits[] = "0123456789abcdef";
 
-  /* check that input is sensible */
-  if ( st == NULL ) return MD6_NULLSTATE;
-  
-  for (i=0;i<((st->d+7)/8);i++)
-    { st->hexhashval[2*i]   
-	= hex_digits[ ((st->hashval[i])>>4) & 0xf ];
-      st->hexhashval[2*i+1] 
-	= hex_digits[ (st->hashval[i]) & 0xf ];
+    /* check that input is sensible */
+    if (st == NULL)
+        return MD6_NULLSTATE;
+
+    for (i = 0; i < ((st->d + 7) / 8); i++)
+    {
+        st->hexhashval[2 * i] = hex_digits[((st->hashval[i]) >> 4) & 0xf];
+        st->hexhashval[2 * i + 1] = hex_digits[(st->hashval[i]) & 0xf];
     }
-  
-  /* insert zero string termination byte at position ceil(d/4) */
-  st->hexhashval[(st->d+3)/4] = 0;
-  return MD6_SUCCESS;
+
+    /* insert zero string termination byte at position ceil(d/4) */
+    st->hexhashval[(st->d + 3) / 4] = 0;
+    return MD6_SUCCESS;
 }
 
-/* Extract last d bits of chaining variable as hash value.
+/* Extract last d bits of chaining variable as hash value.
 */
 
-void trim_hashval(md6_state *st)
+void trim_hashval(md6_state* st)
 { /* trim hashval to desired length d bits by taking only last d bits */
-  /* note that high-order bit of a byte is considered its *first* bit */
-  int full_or_partial_bytes = (st->d+7)/8;
-  int bits = st->d % 8;                 /* bits in partial byte */
-  int i;
+    /* note that high-order bit of a byte is considered its *first* bit */
+    int full_or_partial_bytes = (st->d + 7) / 8;
+    int bits = st->d % 8;                 /* bits in partial byte */
+    int i;
 
-  /* move relevant bytes to the front */
-  for ( i=0; i<full_or_partial_bytes; i++ )
-    st->hashval[i] = st->hashval[c*(w/8)-full_or_partial_bytes+i];
+    /* move relevant bytes to the front */
+    for (i = 0; i < full_or_partial_bytes; i++)
+        st->hashval[i] = st->hashval[c * (w / 8) - full_or_partial_bytes + i];
 
-  /* zero out following bytes */
-  for ( i=full_or_partial_bytes; i<c*(w/8); i++ )
-    st->hashval[i] = 0;
+    /* zero out following bytes */
+    for (i = full_or_partial_bytes; i < c * (w / 8); i++)
+        st->hashval[i] = 0;
 
-  /* shift result left by (8-bits) bit positions, per byte, if needed */
-  if (bits>0)
-    { for ( i=0; i<full_or_partial_bytes; i++ )
-	{ st->hashval[i] = (st->hashval[i] << (8-bits));
-	  if ( (i+1) < c*(w/8) )
-	    st->hashval[i] |= (st->hashval[i+1] >> bits);
-	}
+    /* shift result left by (8-bits) bit positions, per byte, if needed */
+    if (bits > 0)
+    {
+        for (i = 0; i < full_or_partial_bytes; i++)
+        {
+            st->hashval[i] = (st->hashval[i] << (8 - bits));
+            if ((i + 1) < c * (w / 8))
+                st->hashval[i] |= (st->hashval[i + 1] >> bits);
+        }
     }
 }
 
-/* Final -- no more data; finish up and produce hash value.
+/* Final -- no more data; finish up and produce hash value.
 */
 
-int md6_final( md6_state *st , unsigned char *hashval)
+int md6_final(md6_state* st, unsigned char* hashval)
 /* Do final processing to produce md6 hash value
 ** Input:
 **     st              md6 state that has been accumulating message bits
@@ -800,77 +802,91 @@ int md6_final( md6_state *st , unsigned char *hashval)
 **     MD6_NULLSTATE
 **     MD6_STATENOTINIT
 */
-{ int ell, err;
+{
+    int ell, err;
 
-  /* check that input values are sensible */
-  if ( st == NULL) return MD6_NULLSTATE;
-  if ( st->initialized == 0 ) return MD6_STATENOTINIT;
+    /* check that input values are sensible */
+    if (st == NULL)
+        return MD6_NULLSTATE;
+    if (st->initialized == 0)
+        return MD6_STATENOTINIT;
 
-  /* md6_final was previously called */
-  if ( st->finalized == 1 ) return MD6_SUCCESS;
+    /* md6_final was previously called */
+    if (st->finalized == 1)
+        return MD6_SUCCESS;
 
-  /* force any processing that needs doing */
-  if (st->top == 1) ell = 1;
-  else for (ell=1; ell<=st->top; ell++)
-	 if (st->bits[ell]>0) break;
-  /* process starting at level ell, up to root */
-  err = md6_process(st,ell,1);
-  if (err) return err;
+    /* force any processing that needs doing */
+    if (st->top == 1)
+        ell = 1;
+    else
+        for (ell = 1; ell <= st->top; ell++)
+            if (st->bits[ell] > 0)
+                break;
+    /* process starting at level ell, up to root */
+    err = md6_process(st, ell, 1);
+    if (err)
+        return err;
 
-  /* md6_process has saved final chaining value in st->hashval */
+    /* md6_process has saved final chaining value in st->hashval */
 
-  md6_reverse_little_endian( (md6_word*)st->hashval, c );
+    md6_reverse_little_endian((md6_word*)st->hashval, c);
 
-  /* 4/15/09: Following two lines were previously out of order, which 
-  **          caused errors depending on whether caller took hash output 
-  **          from  st->hashval (which was correct) or from 
-  **                hashval parameter (which was incorrect, since it 
-  **                                   missed getting "trimmed".)
-  */
-  trim_hashval( st );
-  if (hashval != NULL) memcpy( hashval, st->hashval, (st->d+7)/8 );
+    /* 4/15/09: Following two lines were previously out of order, which
+    **          caused errors depending on whether caller took hash output
+    **          from  st->hashval (which was correct) or from
+    **                hashval parameter (which was incorrect, since it
+    **                                   missed getting "trimmed".)
+    */
+    trim_hashval(st);
+    if (hashval != NULL)
+        memcpy(hashval, st->hashval, (st->d + 7) / 8);
 
-  md6_compute_hex_hashval( st );
+    md6_compute_hex_hashval(st);
 
-  st->finalized = 1;
-  return MD6_SUCCESS;
+    st->finalized = 1;
+    return MD6_SUCCESS;
 }
 
-/* Routines for hashing message given "all at once".
+/* Routines for hashing message given "all at once".
 */
 
-int md6_full_hash( int d,                    /* hash bit length */
-		   unsigned char *data,/* complete data to hash */
-		   uint64_t databitlen,   /* its length in bits */
-		   unsigned char *key,       /* OK to give NULL */
-		   int keylen,       /* (in bytes) OK to give 0 */
-		   int L,     /* mode; OK to give md6_default_L */
-		   int r,                   /* number of rounds */
-		   unsigned char *hashval             /* output */
-		   )
-{ md6_state st;
-  int err;
+int md6_full_hash(int d,                    /* hash bit length */
+                  unsigned char* data,/* complete data to hash */
+                  uint64_t databitlen,   /* its length in bits */
+                  unsigned char* key,       /* OK to give NULL */
+                  int keylen,       /* (in bytes) OK to give 0 */
+                  int L,     /* mode; OK to give md6_default_L */
+                  int r,                   /* number of rounds */
+                  unsigned char* hashval             /* output */
+)
+{
+    md6_state st;
+    int err;
 
-  err = md6_full_init(&st,d,key,keylen,L,r);
-  if (err) return err;
-  err = md6_update(&st,data,databitlen);
-  if (err) return err;
-  md6_final(&st,hashval);
-  if (err) return err;
-  return MD6_SUCCESS;
+    err = md6_full_init(&st, d, key, keylen, L, r);
+    if (err)
+        return err;
+    err = md6_update(&st, data, databitlen);
+    if (err)
+        return err;
+    md6_final(&st, hashval);
+    if (err)
+        return err;
+    return MD6_SUCCESS;
 }
 
-int md6_hash( int d,                         /* hash bit length */
-              unsigned char *data,     /* complete data to hash */
-	      uint64_t databitlen,        /* its length in bits */
-	      unsigned char *hashval                  /* output */
-	     )
-{ int err;
+int md6_hash(int d,                         /* hash bit length */
+             unsigned char* data,     /* complete data to hash */
+             uint64_t databitlen,        /* its length in bits */
+             unsigned char* hashval                  /* output */
+)
+{
+    int err;
 
-  err = md6_full_hash(d,data,databitlen,
-		      NULL,0,md6_default_L,md6_default_r(d,0),hashval);
-  if (err) return err;
-  return MD6_SUCCESS;
+    err = md6_full_hash(d, data, databitlen, NULL, 0, md6_default_L, md6_default_r(d, 0), hashval);
+    if (err)
+        return err;
+    return MD6_SUCCESS;
 }
 
 

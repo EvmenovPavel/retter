@@ -1,4 +1,3 @@
-
 #ifndef PORTABLE_C__
 #define PORTABLE_C__
 
@@ -26,7 +25,7 @@ typedef signed int s32;
 typedef unsigned short u16;
 typedef unsigned int u32;
 
-#define ONE32   0xffffffffU
+    #define ONE32   0xffffffffU
 
 #else
 
@@ -35,7 +34,7 @@ typedef signed long s32;
 typedef unsigned int u16;
 typedef unsigned long u32;
 
-#define ONE32   0xffffffffUL
+    #define ONE32   0xffffffffUL
 
 #endif
 
@@ -49,13 +48,13 @@ typedef unsigned long u32;
 #ifdef _MSC_VER
 typedef unsigned __int64 u64;
 typedef signed __int64 s64;
-#define LL(v)   (v##i64)
-#define ONE64   LL(0xffffffffffffffff)
+    #define LL(v)   (v##i64)
+    #define ONE64   LL(0xffffffffffffffff)
 #else  /* !_MSC_VER */
 typedef unsigned long long u64;
 typedef signed long long s64;
-#define LL(v)   (v##ULL)
-#define ONE64   LL(0xffffffffffffffff)
+    #define LL(v)   (v##ULL)
+    #define ONE64   LL(0xffffffffffffffff)
 #endif /* ?_MSC_VER */
 #define T64(x)  ((x) & ONE64)
 #define ROTR64(v, n)   (((v) >> (n)) | T64((v) << (64 - (n))))
@@ -117,12 +116,13 @@ typedef signed long long s64;
 #define LENGTHBYTES 32
 #define LENGTHBITS  (8*LENGTHBYTES) /* 256 */
 
-typedef struct NESSIEstruct {
-	u8  bitLength[LENGTHBYTES]; /* global number of hashed bits (256-bit counter) */
-	u8  buffer[WBLOCKBYTES];	/* buffer of data to hash */
-	int bufferBits;		        /* current number of bits on the buffer */
-	int bufferPos;		        /* current (possibly incomplete) byte slot on the buffer */
-	u64 hash[DIGESTBYTES/8];    /* the hashing state */
+typedef struct NESSIEstruct
+{
+    u8 bitLength[LENGTHBYTES]; /* global number of hashed bits (256-bit counter) */
+    u8 buffer[WBLOCKBYTES];    /* buffer of data to hash */
+    int bufferBits;                /* current number of bits on the buffer */
+    int bufferPos;                /* current (possibly incomplete) byte slot on the buffer */
+    u64 hash[DIGESTBYTES / 8];    /* the hashing state */
 } NESSIEstruct;
 
 #endif   /* PORTABLE_C__ */

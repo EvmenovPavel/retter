@@ -23,12 +23,12 @@
 /* typedef 8 and 32 bit types, resp.  */
 /* adapt these, if necessary,
    for your operating system and compiler */
-typedef    unsigned char        byte;
-typedef    unsigned long        dword;
+typedef unsigned char byte;
+typedef unsigned long dword;
 
 /* if this line causes a compiler error,
  *    adapt the defintion of dword above */
-typedef int the_correct_size_was_chosen [sizeof (dword) == 4? 1: -1];
+// typedef int the_correct_size_was_chosen[sizeof(dword) == 4 ? 1 : -1];
 
 /********************************************************************/
 
@@ -113,24 +113,23 @@ void MDMACconstT(void);
  *  calculates constants T0, T1, T2
  */
 
-dword *MDMACsetup(byte *key);
+dword* MDMACsetup(byte* key);
 /*
  *  expands 128-bit key into (5+4+4)*32-bit K = K0|K1|K2
  */
 
-void MDMACinit(dword *K, dword *MDbuf);
+void MDMACinit(dword* K, dword* MDbuf);
 /*
  *  initializes MDbuffer to K0
  */
 
-void compress(dword *K, dword *MDbuf, dword *X);
+void compress(dword* K, dword* MDbuf, dword* X);
 /*
  *  the compression function.
  *  transforms MDbuf using message bytes X[0] through X[15] and key K1
  */
 
-void MDMACfinish(dword *K, dword *MDbuf, byte *strptr,
-                 dword lswlen, dword mswlen);
+void MDMACfinish(dword* K, dword* MDbuf, byte* strptr, dword lswlen, dword mswlen);
 /*
  *  puts bytes from strptr into X and pad out; appends length and block
  *  containing the key K2 and finally, compresses the last block(s)

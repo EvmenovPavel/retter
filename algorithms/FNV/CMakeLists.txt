@@ -1,0 +1,29 @@
+add_executable(fnv32
+               fnv.h
+               fnv32.c
+               hash_32.c
+               hash_32a.c
+               hash_64.c
+               hash_64a.c
+               longlong.h
+               test_fnv.c)
+
+add_executable(fnv64
+               fnv.h
+               fnv64.c
+               hash_32.c
+               hash_32a.c
+               hash_64.c
+               hash_64a.c
+               longlong.h
+               test_fnv.c)
+
+add_executable(fnv_have_ulong64
+               fnv.h
+               have_ulong64.c
+               hash_32.c
+               hash_32a.c
+               hash_64.c
+               hash_64a.c
+               longlong.h
+               test_fnv.c)

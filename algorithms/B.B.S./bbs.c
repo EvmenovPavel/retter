@@ -18,6 +18,7 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <getopt.h>
 #include <openssl/bio.h>
 #include <openssl/bn.h>
@@ -35,21 +36,21 @@ void usage();
 static void cb(int, int, void*);
 
 /* globals */
-char *pname;
-int  verbose;
-int  debug;
+char* pname;
+int verbose;
+int debug;
 
 /* structure for command-line options */
 struct option opts[] = {
-    { "ascii",      0,  0,  'a' },
-    { "binary",     0,  0,  'b' },
-    { "count",      1,  0,  'c' },
-    { "help",       0,  0,  'h' },
-    { "raw",        0,  0,  'r' },
-    { "size",       1,  0,  's' },
-    { "verbose",    0,  0,  'v' },
-    { "hex",        0,  0,  'x' },
-    { 0 }
+{  "ascii"  , 0, 0, 'a'}
+, {"binary" , 0, 0, 'b'}
+, {"count"  , 1, 0, 'c'}
+, {"help"   , 0, 0, 'h'}
+, {"raw"    , 0, 0, 'r'}
+, {"size"   , 1, 0, 's'}
+, {"verbose", 0, 0, 'v'}
+, {"hex"    , 0, 0, 'x'}
+, {0}
 };
 
 /*
@@ -71,27 +72,27 @@ struct option opts[] = {
  *  the output of the generator - not even with a statement like:
  *  "the next bit has a 51 percent change of being a 1".
  */
-int
-main(argc, argv)
-int  argc;
-char *argv[];
+
+int main(int argc, char* argv[])
 {
-    BIGNUM p, q, n, x1, r, x0;
-    BN_CTX *ctx;
+    BIGNUM* p, * q, * n, * x1, * r, * x0;
+    BN_CTX* ctx;
     unsigned char val;
     int c, bit, byte, count, size;
     char flag;
 
     /* set the defaults */
-    pname   = argv[0];
-    flag    = FLAG_RAW;
-    size    = SIZE;
-    count   = 0;
-    debug   = 0;
+    pname = argv[0];
+    flag = FLAG_RAW;
+    size = SIZE;
+    count = 0;
+    debug = 0;
     verbose = 0;
 
-    while ((c = getopt_long(argc, argv, "abc:Dhrs:vx", opts, NULL)) != -1) {
-        switch (c) {
+    while ((c = getopt_long(argc, argv, "abc:Dhrs:vx", opts, NULL)) != -1)
+    {
+        switch (c)
+        {
             case 'a':   /* set ASCII output format */
                 flag = FLAG_ASC;
                 break;
@@ -109,7 +110,8 @@ char *argv[];
                 break;
             case 's':   /* set bit size to use */
                 size = atoi(optarg);
-                if (size == 0) {
+                if (size == 0)
+                {
                     size = SIZE;
                 }
                 break;
@@ -129,32 +131,37 @@ char *argv[];
         }   /* end switch */
     }   /* end while */
 
-    if (debug) {
+    if (debug)
+    {
         (void)fprintf(stderr, "debug: flag = %i\n", flag);
     }
 
     ctx = BN_CTX_new();
-    BN_init(&n);
-    BN_init(&p);
-    BN_init(&q);
-    BN_init(&r);
-    BN_init(&x0);
-    BN_init(&x1);
+    n = BN_new();
+    p = BN_new();
+    q = BN_new();
+    r = BN_new();
+    x0 = BN_new();
+    x1 = BN_new();
 
     /*
      * find two large prime numbers, (p) and (q), whose
      * product, (n), is a blum integer.
      */
     BN_one(&n);
-    if (verbose) {
+    if (verbose)
+    {
         (void)fprintf(stderr, "Generating first prime number: ");
     }
     BN_generate_prime(&p, size, 0, NULL, NULL, cb, NULL);
-    if (verbose) {
+    if (verbose)
+    {
         (void)fprintf(stderr, "\nGenerating second prime number: ");
     }
-    while ( BN_mod_word(&n, 4) != 3) {
-        if (verbose) {
+    while (BN_mod_word(&n, 4) != 3)
+    {
+        if (verbose)
+        {
             (void)fprintf(stderr, "|");
         }
         BN_generate_prime(&q, size, 0, NULL, NULL, cb, NULL);
@@ -162,7 +169,8 @@ char *argv[];
     }
     BN_clear_free(&p);
     BN_clear_free(&q);
-    if (verbose) {
+    if (verbose)
+    {
         (void)fprintf(stderr, "\n");
     }
 
@@ -171,7 +179,8 @@ char *argv[];
      * relatively prime to (n).
      */
     BN_zero(&r);
-    while (! BN_is_one(&r)) {
+    while (!BN_is_one(&r))
+    {
         BN_rand(&x1, size, 0, 0);
         BN_gcd(&r, &n, &x1, ctx);
     }
@@ -186,55 +195,64 @@ char *argv[];
      * begin computing bits... the (i)th bit is
      * least-signficant-bit of x[i] = (x[i-1] ^ 2) mod n
      */
-    bit  = 0;
+    bit = 0;
     byte = 0;
 
-    for ( ; ; ) {
+    for (;;)
+    {
         BN_mod_mul(&x1, &x0, &x0, &n, ctx);
 
-        if (bit == 0) {
+        if (bit == 0)
+        {
             val = 0;
         }
 
-        if ( BN_is_bit_set(&x1, 0)) {
+        if (BN_is_bit_set(&x1, 0))
+        {
             val |= (1 << bit);
         }
 
         bit++;
-        if (bit == 8) {
-            if (debug) {
+        if (bit == 8)
+        {
+            if (debug)
+            {
                 (void)printf("debug: val = %i (0x%x)\n", val, val);
             }
 
-            switch (flag) {
+            switch (flag)
+            {
                 case FLAG_RAW:
-                    (void)printf ("%c", val);
+                    (void)printf("%c", val);
                     break;
                 case FLAG_HEX:
-                    (void)printf ("%02x", val);
+                    (void)printf("%02x", val);
                     break;
                 case FLAG_ASC:
-                    (void)printf ("%03i", val);
+                    (void)printf("%03i", val);
                     break;
                 case FLAG_BIN:
-                    (void)printf ("%d", ((val & 0x80) >> 7));
-                    (void)printf ("%d", ((val & 0x40) >> 6));
-                    (void)printf ("%d", ((val & 0x20) >> 5));
-                    (void)printf ("%d", ((val & 0x10) >> 4));
-                    (void)printf ("%d", ((val & 0x08) >> 3));
-                    (void)printf ("%d", ((val & 0x04) >> 2));
-                    (void)printf ("%d", ((val & 0x02) >> 1));
-                    (void)printf ("%d",  (val & 0x01));
+                    (void)printf("%d", ((val & 0x80) >> 7));
+                    (void)printf("%d", ((val & 0x40) >> 6));
+                    (void)printf("%d", ((val & 0x20) >> 5));
+                    (void)printf("%d", ((val & 0x10) >> 4));
+                    (void)printf("%d", ((val & 0x08) >> 3));
+                    (void)printf("%d", ((val & 0x04) >> 2));
+                    (void)printf("%d", ((val & 0x02) >> 1));
+                    (void)printf("%d", (val & 0x01));
                     break;
             }
 
-            if (debug) {
+            if (debug)
+            {
                 (void)printf("\n");
             }
 
             bit = 0;
-            if (count) {
-                if (++byte >= count) {
+            if (count)
+            {
+                if (++byte >= count)
+                {
                     break;
                 }
             }
@@ -243,23 +261,31 @@ char *argv[];
         BN_copy(&x0, &x1);
     }
 
+    BN_free(ctx);
+    BN_free(n);
+    BN_free(p);
+    BN_free(q);
+    BN_free(r);
+    BN_free(x0);
+    BN_free(x1);
+
     fflush(stdout);
-    return(0);
+    return (0);
 }
 
-void
-usage()
+void usage()
 {
-    fprintf (stderr, "%s [OPTION]...\n\n", pname);
-    fprintf (stderr, "Options:\n");
-    fprintf (stderr, "-a, --ascii     Write output as 3-digit ASCII numbers (e.g. 029)\n");
-    fprintf (stderr, "-b, --binary    Write output as stream of 1's and 0's\n");
-    fprintf (stderr, "-c, --count=NUM Number of bytes to output\n");
-    fprintf (stderr, "-h, --help      Print this message and exit\n");
-    fprintf (stderr, "-r, --raw       Write output as RAW data (default)\n");
-    fprintf (stderr, "-s, --size=SIZE Set the bit-size of the numerical fields (default: %i)\n", SIZE);
-    fprintf (stderr, "-v, --verbose   Print progress messages\n");
-    fprintf (stderr, "-x, --hex       Write output as 2-character hexadecimal (e.g. FE)\n");
+    fprintf(stderr, "%s [OPTION]...\n\n", pname);
+    fprintf(stderr, "Options:\n");
+    fprintf(stderr, "-a, --ascii     Write output as 3-digit ASCII numbers (e.g. 029)\n");
+    fprintf(stderr, "-b, --binary    Write output as stream of 1's and 0's\n");
+    fprintf(stderr, "-c, --count=NUM Number of bytes to output\n");
+    fprintf(stderr, "-h, --help      Print this message and exit\n");
+    fprintf(stderr, "-r, --raw       Write output as RAW data (default)\n");
+    fprintf(stderr, "-s, --size=SIZE Set the bit-size of the numerical fields (default: %i)\n", SIZE);
+    fprintf(stderr, "-v, --verbose   Print progress messages\n");
+    fprintf(stderr, "-x, --hex       Write output as 2-character hexadecimal (e.g. FE)\n");
+
     exit(1);
 }
 
@@ -267,22 +293,33 @@ usage()
  * callback routine for displaying progress
  * during prime number generation
  */
-static void
-cb(p, n, arg)
-int  p;
-int  n;
-void *arg;
+static void cb(p, n, arg)int p;
+                         int n;
+                         void* arg;
 {
     char c = '*';
 
-    if (! verbose) {
+    if (!verbose)
+    {
         return;
     }
 
-    if (p == 0) { c = '.';  }
-    if (p == 1) { c = '+';  }
-    if (p == 2) { c = '*';  }
-    if (p == 3) { c = '\n'; }
+    if (p == 0)
+    {
+        c = '.';
+    }
+    if (p == 1)
+    {
+        c = '+';
+    }
+    if (p == 2)
+    {
+        c = '*';
+    }
+    if (p == 3)
+    {
+        c = '\n';
+    }
 
     (void)fprintf(stderr, "%c", c);
     (void)fflush(stderr);

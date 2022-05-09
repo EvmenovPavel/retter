@@ -1,0 +1,9 @@
+add_executable(md6
+               inttypes.h
+               md6.h
+               md6_compress.c
+               md6_mode.c
+               md6_nist.c
+               md6_nist.h
+               md6sum.c
+               stdint.h)

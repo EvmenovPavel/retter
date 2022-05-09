@@ -13,8 +13,8 @@ extern "C" {
 typedef unsigned int UINT32;
 typedef unsigned long long UINT64;
 
-void RadioGatun32_FastIterate(UINT32 *a, UINT32 *b, const UINT32* in, unsigned int Nr13Blocks);
-void RadioGatun64_FastIterate(UINT64 *a, UINT64 *b, const UINT64* in, unsigned int Nr13Blocks);
+void RadioGatun32_FastIterate(UINT32* a, UINT32* b, const UINT32* in, unsigned int Nr13Blocks);
+void RadioGatun64_FastIterate(UINT64* a, UINT64* b, const UINT64* in, unsigned int Nr13Blocks);
 
 #ifdef __cplusplus
 }

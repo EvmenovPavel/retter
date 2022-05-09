@@ -50,47 +50,34 @@
 #include "md6.h"
 #include "md6_nist.h"
 
-HashReturn Init( hashState *state, 
-		 int hashbitlen
-		 )
-{ int err;
-  if ((err = md6_init( (md6_state *) state, 
-		       hashbitlen
-		       )))
-    return err;
-  state->hashbitlen = hashbitlen;
-  return SUCCESS;
+HashReturn Init(hashState* state, int hashbitlen)
+{
+    int err;
+    if ((err = md6_init((md6_state*)state, hashbitlen)))
+        return err;
+    state->hashbitlen = hashbitlen;
+    return SUCCESS;
 }
 
-HashReturn Update( hashState *state, 
-		   const BitSequence *data, 
-		   DataLength databitlen
-		   )
-{ return md6_update( (md6_state *) state, 
-		     (unsigned char *)data, 
-		     (uint64_t) databitlen );
+HashReturn Update(hashState* state, const BitSequence* data, DataLength databitlen)
+{
+    return md6_update((md6_state*)state, (unsigned char*)data, (uint64_t)databitlen);
 }
 
-HashReturn Final( hashState *state,
-		  BitSequence *hashval
-		  )
-{ return md6_final( (md6_state *) state,
-		    (unsigned char *) hashval
-		    );
+HashReturn Final(hashState* state, BitSequence* hashval)
+{
+    return md6_final((md6_state*)state, (unsigned char*)hashval);
 }
 
-HashReturn Hash( int hashbitlen,
-		 const BitSequence *data,
-		 DataLength databitlen,
-		 BitSequence *hashval
-		 )
-{ int err;
-  md6_state state;
-  if ((err = Init( &state, hashbitlen ))) 
-    return err;
-  if ((err = Update( &state, data, databitlen ))) 
-    return err;
-  return Final( &state, hashval );
+HashReturn Hash(int hashbitlen, const BitSequence* data, DataLength databitlen, BitSequence* hashval)
+{
+    int err;
+    md6_state state;
+    if ((err = Init(&state, hashbitlen)))
+        return err;
+    if ((err = Update(&state, data, databitlen)))
+        return err;
+    return Final(&state, hashval);
 }
 
 

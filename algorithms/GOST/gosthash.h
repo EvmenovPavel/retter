@@ -16,29 +16,29 @@
 
 /* State structure */
 
-typedef struct 
+typedef struct
 {
-  unsigned long sum[8];
-  unsigned long hash[8];
-  unsigned long len[8];
-  unsigned char partial[32];
-  size_t partial_bytes;  
+    unsigned long sum[8];
+    unsigned long hash[8];
+    unsigned long len[8];
+    unsigned char partial[32];
+    size_t partial_bytes;
 } GostHashCtx;
-  
+
 /* Compute some lookup-tables that are needed by all other functions. */
 
-void gosthash_init();     
+void gosthash_init();
 
 /* Clear the state of the given context structure. */
 
-void gosthash_reset(GostHashCtx *ctx);  
+void gosthash_reset(GostHashCtx* ctx);
 
 /* Mix in len bytes of data for the given buffer. */
 
-void gosthash_update(GostHashCtx *ctx, const unsigned char *buf, size_t len);
+void gosthash_update(GostHashCtx* ctx, const unsigned char* buf, size_t len);
 
 /* Compute and save the 32-byte digest. */
 
-void gosthash_final(GostHashCtx *ctx, unsigned char *digest);
+void gosthash_final(GostHashCtx* ctx, unsigned char* digest);
 
 #endif /* GOSTHASH_H */

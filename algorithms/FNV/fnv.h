@@ -34,7 +34,7 @@
  ***
  *
  * NOTE: The FNV-0 historic hash is not recommended.  One should use
- *   the FNV-1 hash instead.
+ *	 the FNV-1 hash instead.
  *
  * To use the 32 bit FNV-0 historic hash, pass FNV0_32_INIT as the
  * Fnv32_t hashval argument to fnv_32_buf() or fnv_32_str().
@@ -67,10 +67,10 @@
  * PERFORMANCE OF THIS SOFTWARE.
  *
  * By:
- *  chongo <Landon Curt Noll> /\oo/\
+ *	chongo <Landon Curt Noll> /\oo/\
  *      http://www.isthe.com/chongo/
  *
- * Share and Enjoy! :-)
+ * Share and Enjoy!	:-)
  */
 
 #if !defined(__FNV_H__)
@@ -78,7 +78,7 @@
 
 #include <sys/types.h>
 
-#define FNV_VERSION "5.0.2" /* @(#) FNV Version */
+#define FNV_VERSION "5.0.2"	/* @(#) FNV Version */
 
 
 /*
@@ -115,21 +115,8 @@ typedef u_int32_t Fnv32_t;
 /*
  * determine how 64 bit unsigned values are represented
  */
+#include "longlong.h"
 
-#if !defined(__LONGLONG_H__)
-#define __LONGLONG_H__
-
-/* do we have/want to use a long long type? */
-#define HAVE_64BIT_LONG_LONG  /* yes */
-
-/*
- * NO64BIT_LONG_LONG undef HAVE_64BIT_LONG_LONG
- */
-#if defined(NO64BIT_LONG_LONG)
-#undef HAVE_64BIT_LONG_LONG
-#endif /* NO64BIT_LONG_LONG */
-
-#endif /* !__LONGLONG_H__ */
 
 /*
  * 64 bit FNV-0 hash
@@ -184,13 +171,13 @@ extern const Fnv64_t fnv1a_64_init;
  * hash types
  */
 enum fnv_type {
-    FNV_NONE = 0, /* invalid FNV hash type */
-    FNV0_32 = 1,  /* FNV-0 32 bit hash */
-    FNV1_32 = 2,  /* FNV-1 32 bit hash */
-    FNV1a_32 = 3, /* FNV-1a 32 bit hash */
-    FNV0_64 = 4,  /* FNV-0 64 bit hash */
-    FNV1_64 = 5,  /* FNV-1 64 bit hash */
-    FNV1a_64 = 6, /* FNV-1a 64 bit hash */
+    FNV_NONE = 0,	/* invalid FNV hash type */
+    FNV0_32 = 1,	/* FNV-0 32 bit hash */
+    FNV1_32 = 2,	/* FNV-1 32 bit hash */
+    FNV1a_32 = 3,	/* FNV-1a 32 bit hash */
+    FNV0_64 = 4,	/* FNV-0 64 bit hash */
+    FNV1_64 = 5,	/* FNV-1 64 bit hash */
+    FNV1a_64 = 6,	/* FNV-1a 64 bit hash */
 };
 
 
@@ -198,32 +185,32 @@ enum fnv_type {
  * these test vectors are used as part o the FNV test suite
  */
 struct test_vector {
-    void *buf;    /* start of test vector buffer */
-    int len;    /* length of test vector */
+    void *buf;		/* start of test vector buffer */
+    int len;		/* length of test vector */
 };
 struct fnv0_32_test_vector {
-    struct test_vector *test; /* test vector buffer to hash */
-    Fnv32_t fnv0_32;    /* expected FNV-0 32 bit hash value */
+    struct test_vector *test;	/* test vector buffer to hash */
+    Fnv32_t fnv0_32;		/* expected FNV-0 32 bit hash value */
 };
 struct fnv1_32_test_vector {
-    struct test_vector *test; /* test vector buffer to hash */
-    Fnv32_t fnv1_32;    /* expected FNV-1 32 bit hash value */
+    struct test_vector *test;	/* test vector buffer to hash */
+    Fnv32_t fnv1_32;		/* expected FNV-1 32 bit hash value */
 };
 struct fnv1a_32_test_vector {
-    struct test_vector *test; /* test vector buffer to hash */
-    Fnv32_t fnv1a_32;   /* expected FNV-1a 32 bit hash value */
+    struct test_vector *test;	/* test vector buffer to hash */
+    Fnv32_t fnv1a_32;		/* expected FNV-1a 32 bit hash value */
 };
 struct fnv0_64_test_vector {
-    struct test_vector *test; /* test vector buffer to hash */
-    Fnv64_t fnv0_64;    /* expected FNV-0 64 bit hash value */
+    struct test_vector *test;	/* test vector buffer to hash */
+    Fnv64_t fnv0_64;		/* expected FNV-0 64 bit hash value */
 };
 struct fnv1_64_test_vector {
-    struct test_vector *test; /* test vector buffer to hash */
-    Fnv64_t fnv1_64;    /* expected FNV-1 64 bit hash value */
+    struct test_vector *test;	/* test vector buffer to hash */
+    Fnv64_t fnv1_64;		/* expected FNV-1 64 bit hash value */
 };
 struct fnv1a_64_test_vector {
-    struct test_vector *test; /* test vector buffer to hash */
-    Fnv64_t fnv1a_64;   /* expected FNV-1a 64 bit hash value */
+    struct test_vector *test;	/* test vector buffer to hash */
+    Fnv64_t fnv1a_64;		/* expected FNV-1a 64 bit hash value */
 };
 
 

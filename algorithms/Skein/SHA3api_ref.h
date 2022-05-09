@@ -14,37 +14,34 @@
 #include "skein.h"
 
 typedef enum
-    {
-    SUCCESS     = SKEIN_SUCCESS,
-    FAIL        = SKEIN_FAIL,
+{
+    SUCCESS = SKEIN_SUCCESS,
+    FAIL = SKEIN_FAIL,
     BAD_HASHLEN = SKEIN_BAD_HASHLEN
-    }
-    HashReturn;
+} HashReturn;
 
-typedef size_t   DataLength;                /* bit count  type */
-typedef u08b_t   BitSequence;               /* bit stream type */
+typedef size_t DataLength;                /* bit count  type */
+typedef u08b_t BitSequence;               /* bit stream type */
 
 typedef struct
-    {
-    uint_t  statebits;                      /* 256, 512, or 1024 */
+{
+    uint_t statebits;                      /* 256, 512, or 1024 */
     union
-        {
+    {
         Skein_Ctxt_Hdr_t h;                 /* common header "overlay" */
         Skein_256_Ctxt_t ctx_256;
         Skein_512_Ctxt_t ctx_512;
         Skein1024_Ctxt_t ctx1024;
-        } u;
-    }
-    hashState;
+    } u;
+} hashState;
 
 /* "incremental" hashing API */
-HashReturn Init  (hashState *state, int hashbitlen);
-HashReturn Update(hashState *state, const BitSequence *data, DataLength databitlen);
-HashReturn Final (hashState *state,       BitSequence *hashval);
+HashReturn Init(hashState* state, int hashbitlen);
+HashReturn Update(hashState* state, const BitSequence* data, DataLength databitlen);
+HashReturn Final(hashState* state, BitSequence* hashval);
 
 /* "all-in-one" call */
-HashReturn Hash  (int hashbitlen,   const BitSequence *data, 
-                  DataLength databitlen,  BitSequence *hashval);
+HashReturn Hash(int hashbitlen, const BitSequence* data, DataLength databitlen, BitSequence* hashval);
 
 
 /*
@@ -56,11 +53,11 @@ HashReturn Hash  (int hashbitlen,   const BitSequence *data,
 ** The selection is controlled by these constants.
 */
 #ifndef SKEIN_256_NIST_MAX_HASHBITS
-#define SKEIN_256_NIST_MAX_HASHBITS (256)
+    #define SKEIN_256_NIST_MAX_HASHBITS (256)
 #endif
 
 #ifndef SKEIN_512_NIST_MAX_HASHBITS
-#define SKEIN_512_NIST_MAX_HASHBITS (512)
+    #define SKEIN_512_NIST_MAX_HASHBITS (512)
 #endif
 
 #endif  /* ifdef _AHS_API_H_ */

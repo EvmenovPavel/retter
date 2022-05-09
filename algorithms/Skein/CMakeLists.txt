@@ -1,0 +1,11 @@
+add_executable(skein
+               brg_endian.h
+               brg_types.h
+               SHA3api_ref.c
+               SHA3api_ref.h
+               skein.c
+               skein.h
+               skein_block.c
+               skein_debug.c
+               skein_debug.h
+               skein_port.h)
